@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>✨ 随缘优惠 · 库洛牌首占</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+  font-family:'Noto Sans SC',sans-serif;
+  background-color:#f5e0e6;
+  background-image:radial-gradient(circle,#fff 7px,transparent 7px);
+  background-size:50px 50px;
+  min-height:100vh;min-height:100dvh;
+  display:flex;justify-content:center;align-items:flex-start;
+  padding:14px 10px 36px;overflow-x:hidden;position:relative;
+}
+
+/* ===== 星星闪烁层 ===== */
+.stars-layer{position:fixed;inset:0;pointer-events:none;z-index:1}
+.star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;
+  animation:twinkle var(--d) ease-in-out infinite var(--dl);
+  opacity:0;box-shadow:0 0 4px 2px rgba(255,200,230,.7),0 0 8px 3px rgba(180,140,220,.35)}
+@keyframes twinkle{0%,100%{opacity:0;transform:scale(.2)}20%{opacity:1;transform:scale(1)}80%{opacity:1;transform:scale(1)}}
+
+/* ===== 浮动装饰 ===== */
+.float-deco{position:fixed;inset:0;pointer-events:none;z-index:0}
+.fi{position:absolute;font-size:20px;opacity:.4;animation:floatUp 12s linear infinite var(--dl);
+  filter:drop-shadow(0 2px 3px rgba(150,80,130,.15))}
+@keyframes floatUp{0%{transform:translateY(110vh)rotate(0);opacity:0}10%{opacity:.4}90%{opacity:.4}100%{transform:translateY(-10vh)rotate(360deg);opacity:0}}
+
+/* ===== 主容器 ===== */
+.container{position:relative;z-index:2;width:100%;max-width:410px;margin-top:4px}
+
+/* ===== 头部 ===== */
+.header{text-align:center;margin-bottom:12px}
+.hi-wrap{display:inline-block;position:relative;margin-bottom:4px}
+.hi-icon{font-size:48px;display:block;animation:hiFloat 3s ease-in-out infinite;
+  filter:drop-shadow(0 4px 12px rgba(200,120,200,.45))}
+@keyframes hiFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-7px) scale(1.05)}}
+.hi-icon::before,.hi-icon::after{content:"✦";position:absolute;color:#d4a0e8;font-size:13px;
+  animation:orbitSpin 4s linear infinite}
+.hi-icon::before{top:2px;left:-16px}.hi-icon::after{top:2px;right:-16px;animation-delay:-2s}
+@keyframes orbitSpin{from{transform:rotate(0deg) translateX(8px)}to{transform:rotate(360deg) translateX(8px)}}
+
+.title-main{font-size:24px;font-weight:900;
+  background:linear-gradient(135deg,#ECD9AE,#CDB274,#E0CB92);
+  background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:titleShimmer 3s linear infinite;letter-spacing:3px;line-height:1.3}
+@keyframes titleShimmer{to{background-position:200% center}}
+.subtitle{font-size:12.5px;color:#B89A5E;font-weight:500;margin-top:3px;letter-spacing:1px}
+
+/* 分割线 */
+.div-line{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0 16px}
+.div-line span{height:1.5px;width:55px;background:linear-gradient(90deg,transparent,#e8b0cc,transparent)}
+.div-dm{color:#CDAB6B;font-size:9px;animation:dPulse 2s ease-in-out infinite}
+@keyframes dPulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.3);opacity:1}}
+
+/* ===== 牌区域 ===== */
+.cards-area{min-height:280px;display:flex;justify-content:center;align-items:center;gap:12px;
+  padding:22px 6px;position:relative;perspective:1000px}
+
+/* 库洛牌 */
+.cc{width:100px;height:152px;border-radius:10px;position:relative;cursor:pointer;
+  transition:all .45s cubic-bezier(.34,1.56,.64,1);
+  transform-style:preserve-3d;flex-shrink:0;
+  opacity:0;transform:translateY(60px) scale(.25) rotateY(180deg)}
+.cc.v{opacity:1;transform:translateY(0) scale(1) rotateY(0)}
+.cc:hover:not(.sel):not(.no-hover){transform:translateY(-10px) scale(1.08) rotateY(5deg)}
+.cc.sel{transform:translateY(-16px) scale(1.15)!important;z-index:10}
+
+/* 牌背面 */
+.cb{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background:linear-gradient(145deg,#6b1a5a,#8b2a70 30%,#a83a78 60%,#6b1a5a);
+  border:3px solid #c498bc;
+  box-shadow:0 0 20px rgba(168,58,120,.4),0 0 40px rgba(139,42,112,.2),
+    inset 0 0 20px rgba(255,200,240,.08),0 6px 20px rgba(107,26,90,.5)}
+.cb::before{content:"☀";position:absolute;top:7px;right:7px;font-size:18px;color:rgba(255,215,0,.55)}
+.cb::after{content:"☽";position:absolute;bottom:7px;left:7px;font-size:17px;color:rgba(200,180,255,.5)}
+
+.cmc{width:52px;height:52px;border-radius:50%;border:2px solid rgba(196,152,188,.6);
+  display:flex;align-items:center;justify-content:center;position:relative;animation:cRot 8s linear infinite}
+@keyframes cRot{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.cmi{width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(255,190,235,.5);
+  display:flex;align-items:center;justify-content:center;font-size:20px;color:rgba(255,210,170,.75);
+  animation:cRot 8s linear infinite reverse}
+
+.ccs{position:absolute;font-size:11px;color:rgba(255,200,150,.4);animation:sTwinkle 2s ease-in-out infinite}
+.ccs:nth-child(1){top:4px;left:4px}.ccs:nth-child(2){top:4px;right:4px}
+.ccs:nth-child(3){bottom:4px;left:4px}.ccs:nth-child(4){bottom:4px;right:4px}
+@keyframes sTwinkle{0%,100%{opacity:.3;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+/* 牌正面（翻开后显示奖品） */
+.cf{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;
+  transform:rotateY(180deg);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;border:3px solid #e8b0d8;
+  box-shadow:0 0 24px rgba(232,176,216,.5),0 6px 24px rgba(220,140,190,.35),inset 0 0 30px rgba(255,240,250,.5)}
+.cf.free{background:linear-gradient(160deg,#fff0f8,#ffe4f0,#ffd6e8)}
+.cf.p9{background:linear-gradient(160deg,#f0e8ff,#e8dff8,#e0d4f0)}
+.cf.p15{background:linear-gradient(160deg,#fff8e8,#ffefdc,#ffe8d0)}
+
+.cf-prize-icon{font-size:32px;margin-bottom:4px;filter:drop-shadow(0 2px 6px rgba(0,0,0,.1));
+  animation:pIconBounce 1.5s ease-in-out infinite}
+@keyframes pIconBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.cf-prize-name{font-size:15px;font-weight:900;color:#B89A5E;text-align:center;line-height:1.3;
+  font-family:'Ma Shan Zheng',cursive}
+.cf-prize-desc{font-size:10px;color:#A88E5E;margin-top:2px;text-align:center;font-weight:500}
+.cf-tag{position:absolute;top:6px;right:6px;padding:2px 8px;border-radius:8px;
+  font-size:9px;font-weight:900;color:#fff}
+.cf.free .cf-tag{background:linear-gradient(135deg,#ff6b9d,#e850b0)}
+.cf.p9 .cf-tag{background:linear-gradient(135deg,#a855f7,#8b5cf6)}
+.cf.p15 .cf-tag{background:linear-gradient(135deg,#f59e0b,#d97706)}
+
+/* 翻牌动画 */
+.cc.flipped .cb{transform:rotateY(-180deg)}
+.cc.flipped .cf{transform:rotateY(0)}
+
+/* 牌选中发光 */
+.cc.sel::after{content:'';position:absolute;inset:-6px;border-radius:14px;
+  border:2.5px solid rgba(255,215,0,.7);
+  box-shadow:0 0 18px rgba(255,200,100,.5),0 0 36px rgba(255,150,200,.3),inset 0 0 12px rgba(255,230,150,.2);
+  animation:selGlow 1.2s ease-in-out infinite alternate;z-index:-1}
+@keyframes selGlow{from{box-shadow:0 0 18px rgba(255,200,100,.5),0 0 36px rgba(255,150,200,.3)}
+  to{box-shadow:0 0 28px rgba(255,200,100,.8),0 0 52px rgba(255,150,200,.5)}}
+
+/* 未选中的变暗 */
+.cc.dimmed{opacity:.4;transform:scale(.92)!important;filter:grayscale(.3)}
+
+/* ===== 抽奖按钮 ===== */
+.draw-btn-wrap{text-align:center;margin:18px 0 14px}
+.draw-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:14px 38px;border:none;border-radius:28px;
+  background:linear-gradient(135deg,#ECD9AE,#CDB274);
+  color:#7a5c2e;font-size:17px;font-weight:900;font-family:inherit;
+  cursor:pointer;letter-spacing:2px;
+  box-shadow:0 6px 24px rgba(205,171,107,.4),0 2px 8px rgba(184,154,94,.3),
+    inset 0 2px 0 rgba(255,255,255,.4);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+  position:relative;overflow:hidden;
+  border:2px solid rgba(255,255,255,.2)
+}
+.draw-btn::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:conic-gradient(from 0deg,transparent,rgba(255,255,255,.15),transparent 30%);
+  animation:btnShine 3s linear infinite}
+@keyframes btnShine{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.draw-btn:hover{transform:translateY(-3px) scale(1.04);
+  box-shadow:0 10px 32px rgba(205,171,107,.5),0 4px 12px rgba(184,154,94,.4)}
+.draw-btn:active{transform:translateY(0) scale(.97)}
+.draw-btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important}
+.draw-btn .btn-icon{font-size:20px}
+
+/* ===== 结果弹窗 ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(60,20,50,.55);backdrop-filter:blur(8px);
+  z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;
+  transition:opacity .4s ease}
+.modal-overlay.show{opacity:1;pointer-events:auto}
+.modal-box{
+  width:88%;max-width:340px;background:linear-gradient(170deg,#fff8fc,#fff0f6);
+  border:3px solid #e8b0d8;border-radius:24px;padding:28px 22px 24px;text-align:center;
+  position:relative;box-shadow:0 12px 48px rgba(180,80,140,.3),0 4px 16px rgba(200,100,160,.2);
+  transform:scale(.7) translateY(30px);transition:all .45s cubic-bezier(.34,1.56,.64,1)
+}
+.modal-overlay.show .modal-box{transform:scale(1) translateY(0)}
+.modal-close{
+  position:absolute;top:10px;right:12px;width:28px;height:28px;border-radius:50%;
+  border:2px solid #CDB274;background:rgba(255,255,255,.7);color:#B89A5E;
+  font-size:14px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .2s;font-family:inherit
+}
+.modal-close:hover{background:#CDB274;color:#fff;border-color:#CDB274}
+.modal-star{font-size:44px;margin-bottom:8px;animation:mStarBounce 1s ease-in-out infinite}
+@keyframes mStarBounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-8px) rotate(5deg)}}
+.modal-title{font-size:22px;font-weight:900;background:linear-gradient(135deg,#ECD9AE,#CDB274);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.modal-prize-name{font-size:26px;font-weight:900;color:#B89A5E;
+  font-family:'Ma Shan Zheng',cursive;margin:8px 0 4px}
+.modal-prize-desc{font-size:13px;color:#A88E5E;margin-bottom:16px}
+.modal-tip{
+  padding:10px 16px;border-radius:14px;font-size:12px;font-weight:600;
+  margin-bottom:16px;line-height:1.5
+}
+.modal-tip.gold{background:linear-gradient(135deg,#fff8e0,#ffefcc);color:#9a7a3a;border:1.5px solid #e0c88a}
+.modal-tip.pink{background:linear-gradient(135deg,#fff6ee,#ffeede);color:#b89a5e;border:1.5px solid #e8d6a8}
+.modal-tip.purple{background:linear-gradient(135deg,#fbf4e8,#f3e8d2);color:#a88e5e;border:1.5px solid #dcc9a0}
+.modal-restart{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:10px 28px;border:none;border-radius:22px;
+  background:linear-gradient(135deg,#e850b0,#a855f7);color:#fff;
+  font-size:14px;font-weight:900;cursor:pointer;font-family:inherit;
+  box-shadow:0 4px 16px rgba(168,85,247,.35);transition:all .25s;
+  border:2px solid rgba(255,255,255,.2)
+}
+.modal-restart:hover{transform:translateY(-2px);box-shadow:0 6px 22px rgba(168,85,247,.45)}
+
+/* ===== 底部说明 ===== */
+.footer-info{text-align:center;margin-top:14px;padding:14px 16px;
+  background:rgba(255,255,255,.55);border-radius:16px;border:1.5px solid rgba(232,176,216,.4)}
+.fi-title{font-size:13px;font-weight:700;color:#B89A5E;margin-bottom:8px}
+.fi-list{text-align:left;font-size:11.5px;color:#A88E5E;line-height:2;
+  padding-left:4px}
+.fi-list b{color:#CDAB6B}
+
+/* ===== 魔法粒子特效 ===== */
+.magic-particle{position:fixed;pointer-events:none;z-index:200;font-size:18px;
+  animation:mParticleUp 1s ease-out forwards}
+@keyframes mParticleUp{0%{opacity:1;transform:translateY(0) scale(.3) rotate(0)}
+  50%{opacity:1;transform:translateY(-40px) scale(1.2) rotate(180deg)}
+  100%{opacity:0;transform:translateY(-80px) scale(.2) rotate(360deg)}}
+
+/* ===== 撒花 ===== */
+.confetti-p{position:fixed;pointer-events:none;z-index:201;font-size:20px;
+  animation:cFall 2.5s ease-out forwards}
+@keyframes cFall{0%{opacity:1;transform:translateY(-20px) rotate(0) scale(1)}
+  100%{opacity:0;transform:translateY(105vh) rotate(720deg) scale(.3)}}
+
+/* ===== 提示文字 ===== */
+.hint-text{text-align:center;font-size:12px;color:#BD9F66;margin-top:10px;
+  font-style:italic;font-weight:500;animation:hTextFade 3s ease-in-out infinite}
+@keyframes hTextFade{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* ===== 状态文字 ===== */
+.status-text{text-align:center;font-size:14px;font-weight:700;color:#CDAB6B;
+  min-height:22px;margin:8px 0 4px;transition:all .3s}
+
+@media(max-width:380px){
+  .cc{width:92px;height:140px}.title-main{font-size:21px}
+  .cards-area{gap:8px;padding:18px 4px}
+}
+</style>
+</head>
+<body>
+
+<!-- 星星层 -->
+<div class="stars-layer" id="starsLayer"></div>
+<!-- 浮动装饰 -->
+<div class="float-deco" id="floatDeco"></div>
+
+<div class="container">
+
+  <!-- 头部 -->
+  <div class="header">
+    <div class="hi-wrap"><span class="hi-icon">🔮</span></div>
+    <div class="title-main">随缘优惠 · 库洛牌首占</div>
+    <p class="subtitle">命运之牌已就位，请抽取你的专属优惠 ✨</p>
+  </div>
+
+  <!-- 分割线 -->
+  <div class="div-line"><span></span><span class="div-dm">◆</span><span></span></div>
+
+  <!-- 状态提示 -->
+  <div class="status-text" id="statusText">点击下方按钮，召唤库洛牌 🌙</div>
+
+  <!-- 卡片区 -->
+  <div class="cards-area" id="cardsArea">
+    <!-- 三张库洛牌由JS生成 -->
+  </div>
+
+  <!-- 抽奖按钮 -->
+  <div class="draw-btn-wrap">
+    <button class="draw-btn" id="drawBtn" onclick="startDraw()">
+      <span class="btn-icon">✨</span> 召唤命运之牌
+    </button>
+  </div>
+
+  <p class="hint-text" id="hintText">💫 心诚则灵，每一张都是命运的安排</p>
+
+  <!-- 底部说明 -->
+  <div class="footer-info">
+    <div class="fi-title">🎴 奖品说明</div>
+    <div class="fi-list">
+      🏆 <b>免费占卜</b> — 无偿体验一次塔罗/星盘解读<br>
+      💜 <b>¥9.9 特惠占</b> — 超值深度解读一次<br>
+      🌟 <b>¥15 尊享占</b> — 完整版详细解读<br><br>
+      <small style="color:#A88E5E">* 每人首次参与，结果随机生成，仅供娱乐参考</small>
+    </div>
+  </div>
+</div>
+
+<!-- 结果弹窗 -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-star" id="modalStar">🎉</div>
+    <div class="modal-title">命运之牌揭晓！</div>
+    <div class="modal-prize-name" id="modalPrizeName"></div>
+    <div class="modal-prize-desc" id="modalPrizeDesc"></div>
+    <div class="modal-tip" id="modalTip"></div>
+  </div>
+</div>
+
+<script>
+// ========== 奖品配置 ==========
+const PRIZES = [
+  { key:'free', name:'免费占卜', desc:'无偿体验一次', icon:'🎁', tag:'FREE',
+    tip:'恭喜获得免费体验资格！联系占卜师即可开启你的命运解读之旅~', tipClass:'pink' },
+  { key:'p9', name:'¥9.9 特惠占', desc:'超值深度解读', icon:'💜', tag:'¥9.9',
+    tip:'太棒了！以特惠价享受深度解读，性价比之王就是你！', tipClass:'purple' },
+  { key:'p15', name:'¥15 尊享占', desc:'完整版详细解读', icon:'⭐', tag:'¥15',
+    tip:'尊享级体验！完整版解读等你来解锁，品质之选~', tipClass:'gold' }
+];
+
+// 概率：9.9 = 50%，free = 25%，15 = 25%
+function drawPrize() {
+  const r = Math.random() * 100;
+  if (r < 50) return PRIZES[1]; // 9.9
+  if (r < 75) return PRIZES[0]; // free
+  return PRIZES[2]; // 15
+}
+
+// ========== 已抽记录（防重复抽奖） ==========
+const STORAGE_KEY='clowLottery_v1';
+let savedPrize=null;
+function loadSave(){ try{const r=localStorage.getItem(STORAGE_KEY); if(r) return JSON.parse(r);}catch(e){} return null; }
+function saveResult(p){ try{localStorage.setItem(STORAGE_KEY, JSON.stringify(p));}catch(e){} }
+
+// ========== 初始化星星 ==========
+(function initStars(){
+  const layer=document.getElementById('starsLayer');
+  for(let i=0;i<60;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    s.style.left=Math.random()*100+'%';
+    s.style.top=Math.random()*100+'%';
+    s.style.setProperty('--d',(2+Math.random()*3)+'s');
+    s.style.setProperty('--dl',Math.random()*5+'s');
+    layer.appendChild(s);
+  }
+})();
+
+// ========== 初始化浮动装饰 ==========
+(function initFloat(){
+  const deco=document.getElementById('floatDeco');
+  const items=['✨','💫','⭐','🌸','🔮','💖','🦋','🌟','✧','💫'];
+  for(let i=0;i<12;i++){
+    const f=document.createElement('span');
+    f.className='fi';
+    f.textContent=items[i%items.length];
+    f.style.left=(Math.random()*90+5)+'%';
+    f.style.setProperty('--dl',Math.random()*12+'s');
+    deco.appendChild(f);
+  }
+})();
+
+// ========== 游戏状态 ==========
+let gameState='idle'; // idle | dealing | selecting | done
+let selectedCard=-1;
+
+const cardsArea=document.getElementById('cardsArea');
+const drawBtn=document.getElementById('drawBtn');
+const statusText=document.getElementById('statusText');
+const hintText=document.getElementById('hintText');
+
+// ========== 生成三张牌 ==========
+function createCards(){
+  cardsArea.innerHTML='';
+  // 打乱奖品顺序用于展示
+  const shuffled=[...PRIZES].sort(()=>Math.random()-.5);
+
+  shuffled.forEach((prize,i)=>{
+    const card=document.createElement('div');
+    card.className='cc';
+    card.dataset.index=i;
+    card.dataset.prizeKey=prize.key;
+
+    // 背面
+    let backHTML=`<div class="cb">
+      <span class="ccs">✦</span><span class="ccs">✦</span>
+      <span class="ccs">✦</span><span class="ccs">✦</span>
+      <div class="cmc"><div class="cmi">🔮</div></div>
+    </div>`;
+
+    // 正面
+    const cls=prize.key==='free'?'free':prize.key==='p9'?'p9':'p15';
+    let frontHTML=`<div class="cf ${cls}">
+      <span class="cf-tag">${prize.tag}</span>
+      <span class="cf-prize-icon">${prize.icon}</span>
+      <div class="cf-prize-name">${prize.name}</div>
+      <div class="cf-prize-desc">${prize.desc}</div>
+    </div>`;
+
+    card.innerHTML=backHTML+frontHTML;
+    card.onclick=function(){
+      if(gameState==='selecting'){ selectCard(i); }
+      else if(gameState==='done' && this.classList.contains('sel') && savedPrize){ showResult(savedPrize); }
+    };
+    cardsArea.appendChild(card);
+  });
+}
+
+// ========== 开始抽牌 ==========
+function startDraw(){
+  if(gameState!=='idle')return;
+  gameState='dealing';
+  drawBtn.disabled=true;
+  drawBtn.innerHTML='<span class="btn-icon">🌀</span> 命运流转中...';
+  statusText.textContent='库洛牌正在从虚空中浮现...';
+
+  createCards();
+  const cards=document.querySelectorAll('.cc');
+
+  // 依次出现三张牌
+  cards.forEach((card,i)=>{
+    setTimeout(()=>{
+      card.classList.add('v');
+      spawnMagicParticles(card);
+      if(i===2){
+        setTimeout(()=>{
+          gameState='selecting';
+          statusText.textContent='选择一张你最有感觉的牌 ✨';
+          hintText.textContent='💫 相信直觉，点击选中一张';
+          drawBtn.style.display='none';
+        },500);
+      }
+    },350*(i+1)); // 每张间隔350ms出现
+  });
+}
+
+// ========== 选择一张牌 ==========
+function selectCard(index){
+  if(gameState!=='selecting')return;
+  gameState='done';
+  selectedCard=index;
+
+  const cards=document.querySelectorAll('.cc');
+  // 先翻开所有牌
+  cards.forEach(c=>c.classList.add('flipped'));
+
+  setTimeout(()=>{
+    // 选中效果
+    cards[index].classList.add('sel');
+    // 其他变暗
+    cards.forEach((c,i)=>{if(i!==index)c.classList.add('dimmed')});
+
+    // 获取实际抽中的奖品（基于概率）并锁定记录
+    const actualPrize=drawPrize();
+    savedPrize=actualPrize;
+    saveResult(actualPrize);
+
+    setTimeout(()=>{
+      showResult(actualPrize);
+      spawnConfetti();
+    },800);
+  },450);
+}
+
+// ========== 显示结果 ==========
+function showResult(prize){
+  document.getElementById('modalStar').textContent=prize.icon;
+  document.getElementById('modalPrizeName').textContent=prize.name;
+  document.getElementById('modalPrizeDesc').textContent=prize.desc;
+  const tipEl=document.getElementById('modalTip');
+  tipEl.textContent=prize.tip;
+  tipEl.className='modal-tip '+prize.tipClass;
+  document.getElementById('modalOverlay').classList.add('show');
+  statusText.textContent='🎊 恭喜！命运之牌已揭晓！';
+}
+
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('modalOverlay'))return;
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+// ========== 已抽过：锁定视图 ==========
+function showLockedView(){
+  const saved=loadSave();
+  if(!saved) return false;
+  savedPrize=saved;
+  gameState='done';
+  drawBtn.style.display='none';
+  createCards();
+  const cards=document.querySelectorAll('.cc');
+  cards.forEach(c=>c.classList.add('v','flipped'));
+  let idx=-1;
+  cards.forEach((c,i)=>{ if(c.dataset.prizeKey===saved.key) idx=i; });
+  if(idx>=0){
+    cards[idx].classList.add('sel');
+    cards.forEach((c,i)=>{ if(i!==idx) c.classList.add('dimmed'); });
+  }
+  statusText.textContent='🔒 你已参与过活动，每位限领一次';
+  hintText.textContent='点击你的命运之牌可查看详情 ✨';
+  return true;
+}
+
+function resetGame(){
+  closeModal();
+  gameState='idle';
+  selectedCard=-1;
+  drawBtn.disabled=false;
+  drawBtn.style.display='';
+  drawBtn.innerHTML='<span class="btn-icon">✨</span> 召唤命运之牌';
+  statusText.textContent='点击下方按钮，召唤库洛牌 🌙';
+  hintText.textContent='💫 心诚则灵，每一张都是命运的安排';
+  cardsArea.innerHTML='<div style="color:#BD9F66;font-size:14px;text-align:center;padding:40px 0">等待召唤...</div>';
+}
+
+// ========== 特效函数 ==========
+function spawnMagicParticles(card){
+  const rect=card.getBoundingClientRect();
+  const cx=rect.left+rect.width/2;
+  const cy=rect.top+rect.height/2;
+  const emojis=['✨','💫','⭐','🔮','✧','🌟','💖'];
+  for(let i=0;i<8;i++){
+    const p=document.createElement('span');
+    p.className='magic-particle';
+    p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+    p.style.left=(cx+(Math.random()-0.5)*60)+'px';
+    p.style.top=(cy+(Math.random()-0.5)*60)+'px';
+    p.style.animationDelay=(i*0.06)+'s';
+    document.body.appendChild(p);
+    setTimeout(()=>p.remove(),1100);
+  }
+}
+
+function spawnConfetti(){
+  const emojis=['🎉','🎊','✨','💫','🌸','🔮','⭐','💖','🦋','🌟','🎀','💝'];
+  for(let i=0;i<35;i++){
+    setTimeout(()=>{
+      const p=document.createElement('span');
+      p.className='confetti-p';
+      p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      p.style.left=Math.random()*100+'%';
+      p.style.top=-(Math.random()*20)+'px';
+      p.style.animationDuration=(1.5+Math.random()*2.5)+'s';
+      document.body.appendChild(p);
+      setTimeout(()=>p.remove(),3500);
+    },i*35);
+  }
+}
+
+// ========== 初始状态 ==========
+if(loadSave()){ showLockedView(); }
+else { cardsArea.innerHTML='<div style="color:#BD9F66;font-size:14px;text-align:center;padding:40px 0">等待召唤...</div>'; }
+</script>
+</body>
+</html>
